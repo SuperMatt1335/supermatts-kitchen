@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Progression | Eagle Project | Matthew Remley</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="js/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <custom-navbar></custom-navbar>
+    
+    <main class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto">
+            <a href="eagle-project.html" class="flex items-center text-indigo-600 hover:text-indigo-800 mb-8">
+                <i data-feather="arrow-left" class="mr-2"></i> Back to Project
+            </a>
+            
+            <h1 class="text-4xl font-bold mb-6">Project Progression Timeline</h1>
+            <p class="text-xl mb-8 text-gray-600">Click through the days to see the project's progression from start to finish.</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <progression-item 
+        day="before"
+        title="Before"
+        image="images/eagle-project-before.png"
+        description="The lot, once a vegetable garden, had become overgrown with weeds, debris, and remnants of old irrigation lines."
+        link="progression-before.html">
+    </progression-item>
+
+    <progression-item 
+        day="1"
+        title="Work Day 1"
+        image="images/eagle-project-day1.png"
+        description="Scouts began the project by excavating concrete footings, clearing cactus plants, and removing debris to open up the site."
+        link="progression-day1.html">
+    </progression-item>
+
+    <progression-item 
+        day="2-3"
+        title="Work Days 2 & 3"
+        image="images/eagle-project-days2-3.png"
+        description="After weeks of rain delays, Scouts returned to weed, till, and grade the lot while removing tangled sprinkler lines."
+        link="progression-days2-3.html">
+    </progression-item>
+
+    <progression-item 
+        day="4"
+        title="Work Day 4"
+        image="images/eagle-project-day4.png"
+        description="The team finished removing old irrigation materials, repaired broken lines, and prepared the layout for the new drip system."
+        link="progression-day4.html">
+    </progression-item>
+
+    <progression-item 
+        day="5-6"
+        title="Work Days 5 & 6"
+        image="images/eagle-project-days5-6.png"
+        description="Volunteers removed two dead trees, replaced them, and began installing decomposed granite pathways to define the garden’s layout."
+        link="progression-days5-6.html">
+    </progression-item>
+
+    <progression-item 
+        day="7"
+        title="Work Day 7"
+        image="images/eagle-project-day7.png"
+        description="The decomposed granite pathways were strengthened using an organic binding agent and compacted for long-term durability."
+        link="progression-day7.html">
+    </progression-item>
+
+    <progression-item 
+        day="8"
+        title="Work Day 8"
+        image="images/eagle-project-day8.png"
+        description="Scouts and volunteers planted olive trees, roses, succulents, and butterfly gardens while finalizing the drip irrigation system."
+        link="progression-day8.html">
+    </progression-item>
+
+    <progression-item 
+        day="9"
+        title="Work Day 9"
+        image="images/eagle-project-day9.png"
+        description="The team spread mulch, installed benches, and prepared the garden for the statue installation and upcoming dedication."
+        link="progression-day9.html">
+    </progression-item>
+
+    <progression-item 
+        day="10"
+        title="Work Day 10"
+        image="images/eagle-project-day10.png"
+        description="The Holy Family statue, accent lighting, and anchored benches were installed, marking the project’s successful completion."
+        link="progression-day10.html">
+    </progression-item>
+</div>
+</div>
+    </main>
+
+    <custom-footer></custom-footer>
+    <script>feather.replace();</script>
+    <script src="js/progression-item.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

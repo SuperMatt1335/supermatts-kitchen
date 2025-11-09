@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Recipe | SuperMatt's Kitchen</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="components/footer.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <custom-navbar></custom-navbar>
+
+  <!-- Logout button (only for logged-in users) -->
+  <div class="flex justify-end max-w-4xl mx-auto px-4 mt-4">
+    <button id="logout-btn" class="hidden text-indigo-600 hover:text-indigo-800">
+      Logout
+    </button>
+  </div>
+
+  <main class="container mx-auto px-4 py-12">
+    <div class="max-w-lg mx-auto bg-white shadow-md rounded-xl p-8">
+      <h1 class="text-3xl font-bold mb-6 text-center">Add New Recipe</h1>
+
+      <!-- Login section -->
+      <div id="login-section" class="text-center">
+        <p class="text-gray-600 mb-4">Please sign in with Google to continue.</p>
+        <button id="login-btn" class="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600">
+          <i data-feather="log-in" class="inline mr-1"></i> Sign in with Google
+        </button>
+      </div>
+
+      <!-- Form Section -->
+      <div id="form-section" class="hidden">
+        <form class="space-y-4">
+
+          <!-- Basic Info -->
+          <div>
+            <label class="block font-medium mb-1">Title</label>
+            <input id="title" type="text" class="w-full border rounded-md px-4 py-2">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium mb-1">Time</label>
+              <input id="time" type="text" class="w-full border rounded-md px-4 py-2" placeholder="e.g., 45 minutes">
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Servings</label>
+              <input id="servings" type="number" class="w-full border rounded-md px-4 py-2" placeholder="e.g., 4">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Difficulty</label>
+            <select id="difficulty" class="w-full border rounded-md px-4 py-2">
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Description</label>
+            <textarea id="description" rows="3" class="w-full border rounded-md px-4 py-2"></textarea>
+          </div>
+
+          <!-- Ingredients Section -->
+          <div>
+            <label class="block font-medium mb-2">Ingredients</label>
+            <div id="ingredient-list" class="space-y-2">
+              <div class="ingredient-item flex gap-2">
+                <input type="number" placeholder="Qty" class="ingredient-qty border px-2 py-1 rounded w-1/5">
+                <input type="text" placeholder="Unit" class="ingredient-unit border px-2 py-1 rounded w-1/5">
+                <input type="text" placeholder="Name" class="ingredient-name border px-2 py-1 rounded flex-1">
+              </div>
+            </div>
+            <button type="button" id="addIngredient" class="mt-2 text-indigo-600 hover:text-indigo-800">+ Add another ingredient</button>
+          </div>
+
+          <!-- Instructions -->
+          <div>
+            <label class="block font-medium mb-1">Instructions (one per line)</label>
+            <textarea id="instructions" rows="5" class="w-full border rounded-md px-4 py-2"></textarea>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label class="block font-medium mb-1">Notes (optional, one per line)</label>
+            <textarea id="notes" rows="3" class="w-full border rounded-md px-4 py-2"></textarea>
+          </div>
+
+          <!-- Image Upload -->
+          <div>
+            <label class="block font-medium mb-1">Image Upload</label>
+            <input id="image" type="file" accept="image/*" class="w-full border rounded-md px-4 py-2">
+          </div>
+
+          <button type="button" id="submit-btn" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">Add Recipe</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <custom-footer></custom-footer>
+
+  <!-- SCRIPT -->
+  <script type="module">
+    import { supabase } from './js/supabaseClient.js';
+    feather.replace();
+
+    const loginSection = document.getElementById('login-section');
+    const formSection = document.getElementById('form-section');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Show login or form depending on session
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      const email = user.email.toLowerCase();
+      if (email === 'matthew@remley.com') {
+        loginSection.classList.add('hidden');
+        formSection.classList.remove('hidden');
+        logoutBtn.classList.remove('hidden');
+      } else {
+        loginSection.innerHTML = `<p class="text-red-600 font-medium">You are not authorized to add recipes.</p>`;
+      }
+    }
+
+    // Login button
+    document.getElementById('login-btn').addEventListener('click', async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + '/add-recipe.html'
+    }
+  });
+  if (error) alert('Login failed: ' + error.message);
+});
+
+    // Logout
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) alert('Error signing out: ' + error.message);
+        else {
+          alert('You have been logged out.');
+          window.location.href = 'login.html';
+        }
+      });
+    }
+
+    // Add ingredient row
+    document.getElementById('addIngredient').addEventListener('click', () => {
+      const list = document.getElementById('ingredient-list');
+      const div = document.createElement('div');
+      div.classList.add('ingredient-item', 'flex', 'gap-2');
+      div.innerHTML = `
+        <input type="number" placeholder="Qty" class="ingredient-qty border px-2 py-1 rounded w-1/5">
+        <input type="text" placeholder="Unit" class="ingredient-unit border px-2 py-1 rounded w-1/5">
+        <input type="text" placeholder="Name" class="ingredient-name border px-2 py-1 rounded flex-1">
+      `;
+      list.appendChild(div);
+    });
+
+    // Submit recipe
+    document.getElementById('submit-btn').addEventListener('click', async () => {
+      const title = document.getElementById('title').value;
+      const time = document.getElementById('time').value;
+      const servings = parseInt(document.getElementById('servings').value);
+      const difficulty = document.getElementById('difficulty').value;
+      const description = document.getElementById('description').value;
+      const instructions = document.getElementById('instructions').value.split('\n').map(i => i.trim()).filter(Boolean);
+      const notes = document.getElementById('notes').value.split('\n').map(i => i.trim()).filter(Boolean);
+      const imageFile = document.getElementById('image').files[0];
+
+      const ingredients = Array.from(document.querySelectorAll('.ingredient-item')).map(item => ({
+        quantity: parseFloat(item.querySelector('.ingredient-qty').value) || 0,
+        unit: item.querySelector('.ingredient-unit').value,
+        name: item.querySelector('.ingredient-name').value
+      })).filter(i => i.name.trim() !== '');
+
+      if (!title || !time || !servings || !difficulty || !description || ingredients.length === 0 || instructions.length === 0) {
+        alert('Please fill out all required fields.');
+        return;
+      }
+
+      let imageUrl = '';
+      if (imageFile) {
+        const fileName = `${Date.now()}-${imageFile.name}`;
+        const { error: uploadError } = await supabase.storage.from('recipe-images').upload(fileName, imageFile);
+        if (uploadError) {
+          alert('Error uploading image: ' + uploadError.message);
+          return;
+        }
+        const { data: publicUrlData } = supabase.storage.from('recipe-images').getPublicUrl(fileName);
+        imageUrl = publicUrlData.publicUrl;
+      }
+
+      const { error } = await supabase.from('recipes').insert([
+        { title, time, servings, difficulty, description, ingredients, instructions, notes, image: imageUrl }
+      ]);
+
+      if (error) alert('❌ Error adding recipe: ' + error.message);
+      else {
+        alert('✅ Recipe added successfully!');
+        document.querySelector('form').reset();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matthew Remley | Digital Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="js/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+    <custom-navbar></custom-navbar>
+    
+    <main class="container mx-auto px-4 py-12">
+        <!-- Hero Section -->
+        <section class="flex flex-col md:flex-row items-center justify-between gap-12 mb-20">
+            <div class="md:w-1/2">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Hello, I'm <span class="text-indigo-600">Matthew Remley</span></h1>
+                <p class="text-xl mb-8 text-gray-600">Driven by curiosity, grounded in service, and fueled by creativity.</p>
+                <div class="flex gap-4">
+                 <!--   <a href="#projects" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg transition">View Projects</a> -->
+                 <!--   <a href="recipes.html" class="border border-indigo-600 text-indigo-600 hover:bg-indigo-50 px-6 py-3 rounded-lg transition">Recipe Blog</a> -->
+                </div>
+            </div>
+            <div class="md:w-1/2">
+                <img src="images/headshot.jpg" alt="Matthew Remley" class="rounded-xl shadow-xl w-full">
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold mb-8 text-center">About Me</h2>
+            <div class="bg-white p-8 rounded-xl shadow-md max-w-3xl mx-auto">
+                <p class="text-lg mb-4">I recently graduated from the University of California, Irvine, with a degree in Biological Sciences. Outside the classroom, I earned the rank of Eagle Scout with Troop 811 in Brea, CA, and continue to stay involved as a parishioner at St. Angela Merici Church. </p>
+                <p class="text-lg mb-4">I currently work as an EMT and am pursuing my goal of becoming a firefighter paramedic, a career that combines service, teamwork, and purpose. </p>
+                <p class="text-lg mb-4">I'm a multi-faceted person with interests spanning technology, science, and the culinary arts. This website brings together my professional experiences, community involvement, and creative interests. Here you'll find highlights of my Eagle Scout project, insights into my journey toward emergency medicine, and a growing recipe blog that reflects my love for cooking and experimentation. </p>
+                <p class="text-lg">When I'm not designing or working, I'll be in the kitchen developing recipes or outdoors exploring the beauty of nature.</p>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="mb-20">
+            <h2 class="text-3xl font-bold mb-8 text-center">Featured Projects</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                    <div class="h-48 overflow-hidden rounded-lg mb-4">
+                        <img src="images/eagle-project-cover.png" alt="Eagle Project" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Eagle Project</h3>
+                    <p class="text-gray-600 mb-4">My journey and achievements in completing my Eagle Scout project.</p>
+                    <a href="eagle-project.html" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center">
+                        View Project <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                    </a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition">
+                    <div class="h-48 overflow-hidden rounded-lg mb-4">
+                        <img src="http://static.photos/food/640x360/15" alt="Recipe Blog" class="w-full h-full object-cover">
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Recipe Blog</h3>
+                    <p class="text-gray-600 mb-4">A collection of my favorite recipes and culinary experiments.</p>
+                    <a href="recipes.html" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center">
+                        Explore Recipes <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+</main>
+
+    <custom-footer></custom-footer>
+    <script>feather.replace();</script>
+    <script src="script.js"></script>
+</body>
+</html>

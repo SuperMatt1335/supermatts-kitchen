@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Recipe | SuperMatt's Kitchen</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="components/footer.js"></script>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+  <custom-navbar></custom-navbar>
+
+  <main class="container mx-auto px-4 py-12">
+    <div class="max-w-3xl mx-auto bg-white shadow-md rounded-xl p-8">
+      <h1 class="text-3xl font-bold mb-6 text-center">Edit Recipe</h1>
+
+      <div id="recipe-form">
+        <p class="text-center text-gray-500 mb-6">Loading recipe...</p>
+      </div>
+    </div>
+  </main>
+
+  <custom-footer></custom-footer>
+
+  <script type="module">
+    import { supabase } from './js/supabaseClient.js';
+    feather.replace();
+
+    // ✅ Protect page with Supabase auth
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      window.location.href = "login.html";
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const recipeId = params.get('id');
+    const formContainer = document.getElementById("recipe-form");
+
+    // ✅ Load recipe data from Supabase
+    async function loadRecipe() {
+      const { data: recipe, error } = await supabase
+        .from("recipes")
+        .select("*")
+        .eq("id", recipeId)
+        .single();
+
+      if (error || !recipe) {
+        formContainer.innerHTML = `<p class="text-center text-gray-600">Recipe not found.</p>`;
+        return;
+      }
+
+      // ✅ Build the edit form dynamically
+      formContainer.innerHTML = `
+        <form id="edit-form" class="space-y-4">
+          <div>
+            <label class="block font-medium mb-1">Title</label>
+            <input id="title" type="text" value="${recipe.title}" class="w-full border rounded-md px-4 py-2">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block font-medium mb-1">Time</label>
+              <input id="time" type="text" value="${recipe.time}" class="w-full border rounded-md px-4 py-2">
+            </div>
+            <div>
+              <label class="block font-medium mb-1">Servings</label>
+              <input id="servings" type="number" value="${recipe.servings}" class="w-full border rounded-md px-4 py-2">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Difficulty</label>
+            <select id="difficulty" class="w-full border rounded-md px-4 py-2">
+              <option ${recipe.difficulty === "Beginner" ? "selected" : ""}>Beginner</option>
+              <option ${recipe.difficulty === "Intermediate" ? "selected" : ""}>Intermediate</option>
+              <option ${recipe.difficulty === "Advanced" ? "selected" : ""}>Advanced</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Description</label>
+            <textarea id="description" rows="3" class="w-full border rounded-md px-4 py-2">${recipe.description}</textarea>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-2">Ingredients</label>
+            <div id="ingredient-list" class="space-y-2">
+              ${Array.isArray(recipe.ingredients)
+                ? recipe.ingredients.map(i => `
+                  <div class="ingredient-item flex gap-2">
+                    <input type="number" value="${i.quantity}" placeholder="Qty" class="ingredient-qty border px-2 py-1 rounded w-1/5">
+                    <input type="text" value="${i.unit}" placeholder="Unit" class="ingredient-unit border px-2 py-1 rounded w-1/5">
+                    <input type="text" value="${i.name}" placeholder="Name" class="ingredient-name border px-2 py-1 rounded flex-1">
+                  </div>`).join("")
+                : ""}
+            </div>
+            <button type="button" id="addIngredient" class="mt-2 text-indigo-600 hover:text-indigo-800">+ Add another ingredient</button>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Instructions (one per line)</label>
+            <textarea id="instructions" rows="5" class="w-full border rounded-md px-4 py-2">${Array.isArray(recipe.instructions) ? recipe.instructions.join('\n') : recipe.instructions}</textarea>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Notes (optional, one per line)</label>
+            <textarea id="notes" rows="3" class="w-full border rounded-md px-4 py-2">${Array.isArray(recipe.notes) ? recipe.notes.join('\n') : recipe.notes || ''}</textarea>
+          </div>
+
+          <div>
+            <label class="block font-medium mb-1">Current Image</label>
+            <img id="current-image" src="${recipe.image || 'https://placehold.co/600x400?text=No+Image'}" alt="Current Image" class="w-full h-64 object-cover rounded-md mb-3">
+            <input id="image" type="file" accept="image/*" class="w-full border rounded-md px-4 py-2">
+          </div>
+
+          <div class="flex gap-4 mt-6">
+            <button type="button" id="save-btn" class="flex-1 bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700">Save Changes</button>
+            <button type="button" id="delete-btn" class="flex-1 bg-red-600 text-white py-2 rounded-md hover:bg-red-700">Delete Recipe</button>
+          </div>
+        </form>
+      `;
+
+      // ✅ Add new ingredient fields
+      document.getElementById("addIngredient").addEventListener("click", () => {
+        const list = document.getElementById("ingredient-list");
+        const div = document.createElement("div");
+        div.classList.add("ingredient-item", "flex", "gap-2");
+        div.innerHTML = `
+          <input type="number" placeholder="Qty" class="ingredient-qty border px-2 py-1 rounded w-1/5">
+          <input type="text" placeholder="Unit" class="ingredient-unit border px-2 py-1 rounded w-1/5">
+          <input type="text" placeholder="Name" class="ingredient-name border px-2 py-1 rounded flex-1">
+        `;
+        list.appendChild(div);
+      });
+
+      // ✅ Save Changes
+      document.getElementById("save-btn").addEventListener("click", async () => {
+        const title = document.getElementById("title").value;
+        const time = document.getElementById("time").value;
+        const servings = parseInt(document.getElementById("servings").value);
+        const difficulty = document.getElementById("difficulty").value;
+        const description = document.getElementById("description").value;
+        const instructions = document.getElementById("instructions").value.split("\n").map(i => i.trim()).filter(Boolean);
+        const notes = document.getElementById("notes").value.split("\n").map(i => i.trim()).filter(Boolean);
+        const imageFile = document.getElementById("image").files[0];
+
+        const ingredients = Array.from(document.querySelectorAll(".ingredient-item")).map(item => ({
+          quantity: parseFloat(item.querySelector(".ingredient-qty").value) || 0,
+          unit: item.querySelector(".ingredient-unit").value,
+          name: item.querySelector(".ingredient-name").value
+        })).filter(i => i.name.trim() !== "");
+
+        let imageUrl = recipe.image;
+
+        // ✅ Upload new image if provided
+        if (imageFile) {
+          const cleanName = imageFile.name.replace(/[^\w.-]/g, "_").toLowerCase();
+          const fileName = `${Date.now()}-${cleanName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from("recipe-images")
+            .upload(fileName, imageFile, { upsert: true });
+
+          if (uploadError) {
+            alert("❌ Error uploading image: " + uploadError.message);
+            return;
+          }
+
+          const { data: publicUrlData } = supabase.storage
+            .from("recipe-images")
+            .getPublicUrl(fileName);
+
+          imageUrl = `${publicUrlData.publicUrl}?t=${Date.now()}`;
+
+          document.getElementById("current-image").src = imageUrl;
+        }
+
+        const { error: updateError } = await supabase
+  .from("recipes")
+  .update({
+    title, time, servings, difficulty, description,
+    ingredients, instructions, notes, image: imageUrl,
+    updated_at: new Date().toISOString()
+  })
+  .eq("id", recipe.id);
+
+        if (updateError) {
+          alert("❌ Error saving changes: " + updateError.message);
+          return;
+        }
+
+        alert("✅ Recipe updated successfully!");
+       window.location.href = `recipe-template.html?id=${recipe.id}&v=${Date.now()}`;
+      });
+
+      // 🗑️ Delete Recipe
+      document.getElementById("delete-btn").addEventListener("click", async () => {
+        if (!confirm("Are you sure you want to permanently delete this recipe?")) return;
+
+        // Try to remove the image from storage
+        const imageKey = recipe.image?.split('/recipe-images/')[1]?.split('?')[0];
+        if (imageKey) {
+          await supabase.storage.from("recipe-images").remove([imageKey]);
+        }
+
+        const { error: deleteError } = await supabase
+          .from("recipes")
+          .delete()
+          .eq("id", recipe.id);
+
+        if (deleteError) {
+          alert("❌ Error deleting recipe: " + deleteError.message);
+          return;
+        }
+
+        alert("🗑️ Recipe deleted successfully!");
+        window.location.href = "recipes.html";
+      });
+    }
+
+    loadRecipe();
+  </script>
+</body>
+</html>
